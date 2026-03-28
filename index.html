@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>韓文40音速成記憶法</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d12;
+    --surface: #16161f;
+    --card: #1e1e2a;
+    --border: #2e2e40;
+    --accent: #ff6b6b;
+    --accent2: #ffd93d;
+    --accent3: #6bcb77;
+    --accent4: #4d96ff;
+    --text: #f0f0f5;
+    --muted: #888899;
+    --vowel: #ff8fab;
+    --consonant: #74c0fc;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘Noto Serif TC’, serif;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* Noise texture overlay */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 200 200’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’ opacity=‘0.03’/%3E%3C/svg%3E”);
+pointer-events: none;
+z-index: 0;
+}
+
+header {
+text-align: center;
+padding: 50px 20px 30px;
+position: relative;
+z-index: 1;
+}
+
+header .han {
+font-family: ‘Noto Sans KR’, sans-serif;
+font-size: 72px;
+font-weight: 900;
+background: linear-gradient(135deg, var(–accent) 0%, var(–accent2) 50%, var(–accent4) 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+line-height: 1;
+letter-spacing: -2px;
+}
+
+header h1 {
+font-size: 28px;
+font-weight: 900;
+color: var(–text);
+margin-top: 8px;
+letter-spacing: 4px;
+}
+
+header p {
+color: var(–muted);
+font-size: 14px;
+margin-top: 8px;
+letter-spacing: 2px;
+}
+
+/* Tab navigation */
+.tabs {
+display: flex;
+justify-content: center;
+gap: 8px;
+padding: 20px;
+position: relative;
+z-index: 1;
+flex-wrap: wrap;
+}
+
+.tab {
+background: var(–card);
+border: 1px solid var(–border);
+color: var(–muted);
+padding: 10px 22px;
+border-radius: 100px;
+cursor: pointer;
+font-family: ‘Noto Serif TC’, serif;
+font-size: 14px;
+transition: all 0.2s;
+white-space: nowrap;
+}
+
+.tab:hover { border-color: var(–accent); color: var(–text); }
+.tab.active {
+background: var(–accent);
+border-color: var(–accent);
+color: white;
+font-weight: 700;
+box-shadow: 0 0 20px rgba(255,107,107,0.4);
+}
+
+/* Sections */
+.section {
+display: none;
+max-width: 1100px;
+margin: 0 auto;
+padding: 20px 20px 60px;
+position: relative;
+z-index: 1;
+}
+.section.active { display: block; }
+
+/* Section title */
+.section-title {
+font-size: 13px;
+letter-spacing: 4px;
+color: var(–accent2);
+text-transform: uppercase;
+margin-bottom: 8px;
+}
+
+.section-heading {
+font-size: 26px;
+font-weight: 900;
+margin-bottom: 24px;
+color: var(–text);
+}
+
+/* Category row */
+.cat-label {
+font-size: 11px;
+letter-spacing: 3px;
+color: var(–muted);
+text-transform: uppercase;
+margin: 28px 0 12px;
+padding-left: 4px;
+border-left: 3px solid var(–accent2);
+padding-left: 10px;
+}
+
+/* Sound cards grid */
+.grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+gap: 12px;
+}
+
+.sound-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 16px;
+padding: 18px 14px;
+cursor: pointer;
+transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+position: relative;
+overflow: hidden;
+}
+
+.sound-card::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+opacity: 0;
+transition: opacity 0.3s;
+border-radius: 16px;
+}
+
+.sound-card.vowel::before { background: radial-gradient(circle at 50% 0%, rgba(255,139,171,0.15), transparent 70%); }
+.sound-card.consonant::before { background: radial-gradient(circle at 50% 0%, rgba(116,192,252,0.15), transparent 70%); }
+
+.sound-card:hover {
+transform: translateY(-4px) scale(1.02);
+border-color: var(–accent);
+box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
+.sound-card:hover::before { opacity: 1; }
+.sound-card.vowel:hover { border-color: var(–vowel); }
+.sound-card.consonant:hover { border-color: var(–consonant); }
+
+.sound-card.flipped .card-front { display: none; }
+.sound-card.flipped .card-back { display: block; }
+.card-back { display: none; }
+
+.char {
+font-family: ‘Noto Sans KR’, sans-serif;
+font-size: 44px;
+font-weight: 900;
+text-align: center;
+display: block;
+line-height: 1;
+margin-bottom: 6px;
+}
+.sound-card.vowel .char { color: var(–vowel); }
+.sound-card.consonant .char { color: var(–consonant); }
+
+.roman {
+font-family: ‘DM Mono’, monospace;
+font-size: 18px;
+text-align: center;
+display: block;
+color: var(–text);
+margin-bottom: 10px;
+}
+
+.mnemonic-tag {
+display: inline-block;
+font-size: 10px;
+background: rgba(255,217,61,0.15);
+color: var(–accent2);
+border: 1px solid rgba(255,217,61,0.3);
+padding: 2px 8px;
+border-radius: 100px;
+margin: 2px 2px 0 0;
+}
+
+.hint {
+font-size: 11px;
+color: var(–muted);
+text-align: center;
+margin-top: 4px;
+line-height: 1.5;
+}
+
+.card-back .mnemonic-body {
+font-size: 13px;
+color: var(–text);
+line-height: 1.7;
+text-align: center;
+}
+
+.card-back .sound-big {
+font-size: 38px;
+font-family: ‘Noto Sans KR’, sans-serif;
+font-weight: 900;
+text-align: center;
+margin-bottom: 6px;
+}
+
+.flip-hint {
+font-size: 10px;
+color: var(–muted);
+text-align: center;
+margin-top: 8px;
+opacity: 0.6;
+}
+
+/* ── Quiz section ── */
+.quiz-box {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 24px;
+padding: 40px 30px;
+text-align: center;
+max-width: 500px;
+margin: 0 auto;
+}
+
+.quiz-char {
+font-family: ‘Noto Sans KR’, sans-serif;
+font-size: 100px;
+font-weight: 900;
+background: linear-gradient(135deg, var(–vowel), var(–consonant));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+display: block;
+line-height: 1;
+margin-bottom: 10px;
+animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pop {
+from { transform: scale(0.5); opacity: 0; }
+to { transform: scale(1); opacity: 1; }
+}
+
+.quiz-type {
+font-size: 11px;
+letter-spacing: 3px;
+color: var(–muted);
+text-transform: uppercase;
+margin-bottom: 30px;
+}
+
+.quiz-options {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-top: 10px;
+}
+
+.quiz-btn {
+background: var(–surface);
+border: 1.5px solid var(–border);
+color: var(–text);
+padding: 14px 10px;
+border-radius: 12px;
+cursor: pointer;
+font-family: ‘DM Mono’, monospace;
+font-size: 16px;
+transition: all 0.2s;
+}
+.quiz-btn:hover { border-color: var(–accent4); background: rgba(77,150,255,0.1); }
+.quiz-btn.correct { background: rgba(107,203,119,0.2); border-color: var(–accent3); color: var(–accent3); }
+.quiz-btn.wrong { background: rgba(255,107,107,0.15); border-color: var(–accent); color: var(–accent); }
+
+.quiz-feedback {
+margin-top: 20px;
+font-size: 15px;
+font-weight: 700;
+min-height: 24px;
+}
+
+.quiz-score {
+font-family: ‘DM Mono’, monospace;
+font-size: 13px;
+color: var(–muted);
+margin-bottom: 20px;
+}
+
+.btn {
+background: var(–accent);
+color: white;
+border: none;
+padding: 12px 28px;
+border-radius: 100px;
+cursor: pointer;
+font-family: ‘Noto Serif TC’, serif;
+font-size: 15px;
+font-weight: 700;
+margin-top: 16px;
+transition: all 0.2s;
+box-shadow: 0 4px 15px rgba(255,107,107,0.35);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,107,107,0.45); }
+
+.btn-secondary {
+background: transparent;
+border: 1.5px solid var(–border);
+color: var(–muted);
+box-shadow: none;
+}
+.btn-secondary:hover { border-color: var(–text); color: var(–text); box-shadow: none; }
+
+/* Mode toggle */
+.mode-row {
+display: flex;
+gap: 10px;
+justify-content: center;
+margin-bottom: 24px;
+flex-wrap: wrap;
+}
+
+.mode-btn {
+background: var(–surface);
+border: 1.5px solid var(–border);
+color: var(–muted);
+padding: 8px 18px;
+border-radius: 100px;
+cursor: pointer;
+font-size: 13px;
+font-family: ‘Noto Serif TC’, serif;
+transition: all 0.2s;
+}
+.mode-btn.active {
+background: var(–accent4);
+border-color: var(–accent4);
+color: white;
+}
+
+/* Progress bar */
+.progress-bar {
+background: var(–border);
+border-radius: 100px;
+height: 4px;
+margin-bottom: 20px;
+overflow: hidden;
+}
+.progress-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–accent), var(–accent2));
+border-radius: 100px;
+transition: width 0.4s ease;
+}
+
+/* Cheat sheet */
+.cheatsheet-table {
+width: 100%;
+border-collapse: collapse;
+font-size: 13px;
+}
+.cheatsheet-table th {
+background: var(–surface);
+padding: 10px 12px;
+text-align: left;
+font-size: 10px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–muted);
+border-bottom: 1px solid var(–border);
+}
+.cheatsheet-table td {
+padding: 10px 12px;
+border-bottom: 1px solid rgba(255,255,255,0.04);
+vertical-align: middle;
+line-height: 1.6;
+}
+.cheatsheet-table tr:hover td { background: rgba(255,255,255,0.03); }
+.cheatsheet-table .k {
+font-family: ‘Noto Sans KR’, sans-serif;
+font-size: 26px;
+font-weight: 900;
+}
+.cheatsheet-table .vowel-row .k { color: var(–vowel); }
+.cheatsheet-table .consonant-row .k { color: var(–consonant); }
+
+.badge {
+display: inline-block;
+font-size: 10px;
+padding: 2px 8px;
+border-radius: 100px;
+font-family: ‘DM Mono’, monospace;
+}
+.badge-vowel { background: rgba(255,139,171,0.15); color: var(–vowel); border: 1px solid rgba(255,139,171,0.3); }
+.badge-consonant { background: rgba(116,192,252,0.15); color: var(–consonant); border: 1px solid rgba(116,192,252,0.3); }
+
+/* Intro tips */
+.tip-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+gap: 16px;
+margin-bottom: 32px;
+}
+.tip-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 16px;
+padding: 20px;
+}
+.tip-icon { font-size: 28px; margin-bottom: 10px; }
+.tip-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(–accent2); }
+.tip-body { font-size: 12px; color: var(–muted); line-height: 1.7; }
+
+/* Learned toggle */
+.sound-card.learned { opacity: 0.45; }
+.sound-card.learned .char { text-decoration: line-through; }
+.learned-count {
+font-size: 12px;
+color: var(–muted);
+text-align: right;
+margin-bottom: 12px;
+font-family: ‘DM Mono’, monospace;
+}
+
+@media(max-width:480px) {
+header .han { font-size: 52px; }
+header h1 { font-size: 20px; }
+.grid { grid-template-columns: repeat(3, 1fr); }
+.sound-card { padding: 12px 8px; }
+.char { font-size: 34px; }
+.roman { font-size: 14px; }
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="han">한글</div>
+  <h1>韓文40音速成法</h1>
+  <p>諧音記憶 × 圖像聯想 × 互動練習</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showSection('learn')">📖 認識音符</button>
+  <button class="tab" onclick="showSection('mnemonic')">🧠 記憶卡片</button>
+  <button class="tab" onclick="showSection('quiz')">🎯 測驗練習</button>
+  <button class="tab" onclick="showSection('cheatsheet')">📋 速查表</button>
+</div>
+
+<!-- ─── LEARN ─── -->
+
+<div id="learn" class="section active">
+  <div class="section-title">STEP 01</div>
+  <div class="section-heading">韓文音符總覽</div>
+
+  <div class="tip-grid">
+    <div class="tip-card">
+      <div class="tip-icon">🔤</div>
+      <div class="tip-title">韓文 = 母音 + 子音 拼組</div>
+      <div class="tip-body">10個基本母音 + 11個複合母音 + 14個基本子音 + 5個硬音子音，共約40個音。</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🎵</div>
+      <div class="tip-title">母音像形狀記</div>
+      <div class="tip-body">ㅏ像一根柱子 → 「啊」；ㅗ像太陽升起 → 「喔」。看形狀就能想起發音！</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🔊</div>
+      <div class="tip-title">子音像嘴型記</div>
+      <div class="tip-body">ㄱ像一個直角，舌根抵上顎的形狀 → 「ㄍ」音。形狀就是發音部位的示意圖。</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">💡</div>
+      <div class="tip-title">點擊翻牌看記憶法</div>
+      <div class="tip-body">下方「記憶卡片」頁，點擊每個卡片可翻面，看諧音和圖像聯想記憶法。</div>
+    </div>
+  </div>
+
+  <div class="cat-label">基本母音 — 10個</div>
+  <div class="learned-count" id="vowel-learned">已標記記住：0 / 10</div>
+  <div class="grid" id="vowel-grid"></div>
+
+  <div class="cat-label">複合母音 — 11個</div>
+  <div class="grid" id="compound-grid"></div>
+
+  <div class="cat-label">基本子音 — 14個</div>
+  <div class="learned-count" id="cons-learned">已標記記住：0 / 14</div>
+  <div class="grid" id="consonant-grid"></div>
+
+  <div class="cat-label">硬音子音 — 5個</div>
+  <div class="grid" id="hard-grid"></div>
+
+  <p style="font-size:12px;color:var(--muted);margin-top:24px;text-align:center;">💡 點擊卡片可標記「已記住」（變暗），方便追蹤學習進度</p>
+</div>
+
+<!-- ─── MNEMONIC ─── -->
+
+<div id="mnemonic" class="section">
+  <div class="section-title">STEP 02</div>
+  <div class="section-heading">翻牌記憶法</div>
+  <p style="color:var(--muted);font-size:13px;margin-bottom:24px;">點擊卡片翻面，看諧音聯想記憶法。先看正面猜發音，再翻面確認！</p>
+
+  <div class="cat-label">母音記憶卡</div>
+  <div class="grid" id="mnemonic-vowel-grid"></div>
+
+  <div class="cat-label">子音記憶卡</div>
+  <div class="grid" id="mnemonic-consonant-grid"></div>
+</div>
+
+<!-- ─── QUIZ ─── -->
+
+<div id="quiz" class="section">
+  <div class="section-title">STEP 03</div>
+  <div class="section-heading">快問快答</div>
+
+  <div class="mode-row">
+    <button class="mode-btn active" onclick="setQuizMode('kr2rom')">韓字 → 拼音</button>
+    <button class="mode-btn" onclick="setQuizMode('rom2kr')">拼音 → 韓字</button>
+    <button class="mode-btn" onclick="setQuizMode('mnemonic')">看提示猜韓字</button>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-score" id="quiz-score">答對：0 ／ 已答：0</div>
+    <div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="quiz-type" id="quiz-type">請選出正確拼音</div>
+    <span class="quiz-char" id="quiz-char">?</span>
+    <div class="quiz-options" id="quiz-options"></div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <button class="btn" onclick="nextQuestion()" id="next-btn" style="display:none">下一題 →</button>
+    <button class="btn btn-secondary" onclick="resetQuiz()" style="margin-left:8px;margin-top:16px">重新開始</button>
+  </div>
+</div>
+
+<!-- ─── CHEATSHEET ─── -->
+
+<div id="cheatsheet" class="section">
+  <div class="section-title">速查</div>
+  <div class="section-heading">完整速查表</div>
+  <p style="color:var(--muted);font-size:13px;margin-bottom:20px;">所有音符一頁總覽，含諧音記憶關鍵字</p>
+  <table class="cheatsheet-table" id="cheatsheet-table"></table>
+</div>
+
+<script>
+// ── DATA ──
+const vowels = [
+  { char:'ㅏ', rom:'a', zh:'啊', mnemonic:'柱子右邊一橫→「啊」，嘴張大！', image:'🏛️', tip:'像直柱加右橫' },
+  { char:'ㅑ', rom:'ya', zh:'呀', mnemonic:'兩根橫線朝右→「呀」，發快一點的啊', image:'✌️', tip:'ㅏ加一橫=ya' },
+  { char:'ㅓ', rom:'eo', zh:'喔/呃', mnemonic:'柱子左邊一橫→嘴型往「左」縮，喔！', image:'😮', tip:'橫在左=eo' },
+  { char:'ㅕ', rom:'yeo', zh:'哟', mnemonic:'兩橫在左→快速「哟」', image:'🤙', tip:'ㅓ加一橫=yeo' },
+  { char:'ㅗ', rom:'o', zh:'喔', mnemonic:'一根柱子下面有地基→太陽從地平線升起「喔！」', image:'🌅', tip:'像T倒過來' },
+  { char:'ㅛ', rom:'yo', zh:'唷', mnemonic:'兩根柱子→「唷」驚訝地看見兩根柱子', image:'😲', tip:'ㅗ加柱=yo' },
+  { char:'ㅜ', rom:'u', zh:'嗚', mnemonic:'像哭臉往下垂→「嗚」嗚嗚哭泣', image:'😢', tip:'倒T=u' },
+  { char:'ㅠ', rom:'yu', zh:'呦', mnemonic:'兩個淚滴往下→「呦」哭得更用力', image:'😭', tip:'ㅜ加柱=yu' },
+  { char:'ㅡ', rom:'eu', zh:'呃/으', mnemonic:'一條水平線→嘴巴拉平「呃」，皺眉頭', image:'😑', tip:'扁扁的一橫' },
+  { char:'ㅣ', rom:'i', zh:'衣', mnemonic:'一根直線→像字母i，發「衣」', image:'🎋', tip:'直線=i' },
+];
+
+const compoundVowels = [
+  { char:'ㅐ', rom:'ae', zh:'欸', mnemonic:'ㅏ+ㅣ組合→「欸」', image:'🤔', tip:'接近中文欸' },
+  { char:'ㅒ', rom:'yae', zh:'也欸', mnemonic:'ㅑ+ㅣ→「也欸」', image:'💬', tip:'較少用' },
+  { char:'ㅔ', rom:'e', zh:'誒', mnemonic:'ㅓ+ㅣ→「誒」，和ㅐ幾乎一樣音', image:'😏', tip:'現代韓語幾乎同音ㅐ' },
+  { char:'ㅖ', rom:'ye', zh:'耶', mnemonic:'ㅕ+ㅣ→「耶！」開心', image:'🎉', tip:'ye' },
+  { char:'ㅘ', rom:'wa', zh:'娃', mnemonic:'ㅗ+ㅏ→嘴圓後再開→「娃」', image:'👶', tip:'wa' },
+  { char:'ㅙ', rom:'wae', zh:'為/歪', mnemonic:'ㅗ+ㅐ→「歪」', image:'😵', tip:'wae' },
+  { char:'ㅚ', rom:'oe', zh:'外', mnemonic:'ㅗ+ㅣ→「外」，像法語eu', image:'🇫🇷', tip:'oe/we' },
+  { char:'ㅝ', rom:'wo', zh:'我', mnemonic:'ㅜ+ㅓ→嘴圓後收→「我」', image:'🙋', tip:'wo/weo' },
+  { char:'ㅞ', rom:'we', zh:'威', mnemonic:'ㅜ+ㅔ→「威」', image:'💪', tip:'we' },
+  { char:'ㅟ', rom:'wi', zh:'威', mnemonic:'ㅜ+ㅣ→「威」嘴圓吹口哨', image:'😗', tip:'wi' },
+  { char:'ㅢ', rom:'ui', zh:'依', mnemonic:'ㅡ+ㅣ→滑音「喂依」', image:'📞', tip:'ui/eui' },
+];
+
+const consonants = [
+  { char:'ㄱ', rom:'g/k', zh:'ㄍ', mnemonic:'像直角尺→舌根抵上顎的形狀，「ㄍ」或「ㄎ」', image:'📐', tip:'直角=舌根音' },
+  { char:'ㄴ', rom:'n', zh:'ㄋ', mnemonic:'像「L」躺著→舌尖抵上顎「ㄋ」', image:'👅', tip:'L形=n' },
+  { char:'ㄷ', rom:'d/t', zh:'ㄉ', mnemonic:'像門框→用門「當」一聲，「ㄉ」', image:'🚪', tip:'門形=d/t' },
+  { char:'ㄹ', rom:'r/l', zh:'ㄌ/ㄖ', mnemonic:'像滑梯→舌頭滑一下「ㄌ」或彈音「ㄖ」', image:'🛝', tip:'滑梯=r/l' },
+  { char:'ㅁ', rom:'m', zh:'ㄇ', mnemonic:'像嘴巴形狀□→閉嘴發「ㄇ」！最直觀！', image:'👄', tip:'方形=嘴=m' },
+  { char:'ㅂ', rom:'b/p', zh:'ㅂ', mnemonic:'像兩片嘴唇合起→嘴唇音「ㄅ」', image:'💋', tip:'雙唇=b/p' },
+  { char:'ㅅ', rom:'s', zh:'ㄙ', mnemonic:'像一頂帽子→帽子「沙沙」作響，「ㄙ」', image:'🎩', tip:'帽形=s' },
+  { char:'ㅇ', rom:'ng/silent', zh:'無聲/ㄫ', mnemonic:'像圓圈○→放在前面無聲（只是佔位），放後面發「ng」', image:'⭕', tip:'圓=零聲母' },
+  { char:'ㅈ', rom:'j', zh:'ㄓ', mnemonic:'像個「T」加一橫→「ㄓ/ㄗ」', image:'🔱', tip:'j音' },
+  { char:'ㅊ', rom:'ch', zh:'ㄔ', mnemonic:'ㅈ加一橫→更送氣的「ㄔ」', image:'💨', tip:'ch=送氣j' },
+  { char:'ㅋ', rom:'k', zh:'ㄎ', mnemonic:'ㄱ加一橫→更送氣的「ㄎ」，咳嗽聲k!', image:'😤', tip:'k=送氣g' },
+  { char:'ㅌ', rom:'t', zh:'ㄊ', mnemonic:'ㄷ加一橫→更送氣的「ㄊ」', image:'💨', tip:'t=送氣d' },
+  { char:'ㅍ', rom:'p', zh:'ㄆ', mnemonic:'像II→兩根柱子，更送氣的「ㄆ」，噴氣！', image:'💨', tip:'p=送氣b' },
+  { char:'ㅎ', rom:'h', zh:'ㄏ', mnemonic:'像一個人戴帽子→帽子下面呼一口氣「ㄏ」', image:'🎓', tip:'h=喉音' },
+];
+
+const hardConsonants = [
+  { char:'ㄲ', rom:'kk', zh:'緊ㄍ', mnemonic:'雙ㄱ→緊喉嚨的「ㄍ」，像喉嚨卡住', image:'😬', tip:'緊音g' },
+  { char:'ㄸ', rom:'tt', zh:'緊ㄉ', mnemonic:'雙ㄷ→緊繃的「ㄉ」', image:'😤', tip:'緊音d' },
+  { char:'ㅃ', rom:'pp', zh:'緊ㅂ', mnemonic:'雙ㅂ→嘴唇用力閉的「ㅂ」', image:'😬', tip:'緊音b' },
+  { char:'ㅆ', rom:'ss', zh:'緊ㄙ', mnemonic:'雙ㅅ→嗤之以鼻的緊「ㄙ」', image:'😒', tip:'緊音s' },
+  { char:'ㅉ', rom:'jj', zh:'緊ㄓ', mnemonic:'雙ㅈ→緊繃的「ㄓ」', image:'😑', tip:'緊音j' },
+];
+
+// ── RENDER LEARN ──
+function renderLearnCard(d, type) {
+  const div = document.createElement('div');
+  div.className = `sound-card ${type}`;
+  div.innerHTML = `
+    <div class="card-front">
+      <span class="char">${d.char}</span>
+      <span class="roman">${d.rom}</span>
+      <div class="hint">${d.zh}</div>
+      <div class="hint" style="margin-top:4px;font-size:10px;color:var(--border)">⬤ 點擊標記已記住</div>
+    </div>`;
+  div.addEventListener('click', () => {
+    div.classList.toggle('learned');
+    updateLearnedCount();
+  });
+  return div;
+}
+
+function updateLearnedCount() {
+  const vCards = document.querySelectorAll('#vowel-grid .sound-card');
+  const vLearned = [...vCards].filter(c=>c.classList.contains('learned')).length;
+  document.getElementById('vowel-learned').textContent = `已標記記住：${vLearned} / ${vCards.length}`;
+
+  const cCards = document.querySelectorAll('#consonant-grid .sound-card');
+  const cLearned = [...cCards].filter(c=>c.classList.contains('learned')).length;
+  document.getElementById('cons-learned').textContent = `已標記記住：${cLearned} / ${cCards.length}`;
+}
+
+const vg = document.getElementById('vowel-grid');
+vowels.forEach(d => vg.appendChild(renderLearnCard(d, 'vowel')));
+
+const cpg = document.getElementById('compound-grid');
+compoundVowels.forEach(d => cpg.appendChild(renderLearnCard(d, 'vowel')));
+
+const cg = document.getElementById('consonant-grid');
+consonants.forEach(d => cg.appendChild(renderLearnCard(d, 'consonant')));
+
+const hg = document.getElementById('hard-grid');
+hardConsonants.forEach(d => hg.appendChild(renderLearnCard(d, 'consonant')));
+
+// ── RENDER MNEMONIC ──
+function renderMnemonicCard(d, type) {
+  const div = document.createElement('div');
+  div.className = `sound-card ${type}`;
+  div.innerHTML = `
+    <div class="card-front">
+      <span class="char">${d.char}</span>
+      <span class="roman">${d.rom}</span>
+      <div class="hint">${d.tip}</div>
+      <div class="flip-hint">▶ 點擊翻面看記憶法</div>
+    </div>
+    <div class="card-back">
+      <div class="sound-big" style="color:${type==='vowel'?'var(--vowel)':'var(--consonant)'}">${d.char}</div>
+      <div class="mnemonic-body">${d.image}<br><strong>${d.zh}</strong><br><span style="font-size:11px;color:var(--muted);margin-top:6px;display:block">${d.mnemonic}</span></div>
+      <div class="flip-hint">▶ 再點翻回</div>
+    </div>`;
+  div.addEventListener('click', () => div.classList.toggle('flipped'));
+  return div;
+}
+
+const mvg = document.getElementById('mnemonic-vowel-grid');
+vowels.forEach(d => mvg.appendChild(renderMnemonicCard(d,'vowel')));
+
+const mcg = document.getElementById('mnemonic-consonant-grid');
+consonants.forEach(d => mcg.appendChild(renderMnemonicCard(d,'consonant')));
+
+// ── QUIZ ──
+const allSounds = [
+  ...vowels.map(d=>({...d,type:'vowel'})),
+  ...consonants.map(d=>({...d,type:'consonant'})),
+  ...hardConsonants.map(d=>({...d,type:'consonant'})),
+];
+
+let quizMode = 'kr2rom';
+let quizCorrect = 0, quizTotal = 0;
+let currentQ = null;
+let answered = false;
+
+function setQuizMode(mode) {
+  quizMode = mode;
+  document.querySelectorAll('.mode-btn').forEach((b,i)=>{
+    b.classList.toggle('active', ['kr2rom','rom2kr','mnemonic'][i]===mode);
+  });
+  resetQuiz();
+}
+
+function shuffle(arr) { return [...arr].sort(()=>Math.random()-0.5); }
+
+function nextQuestion() {
+  answered = false;
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('quiz-feedback').textContent = '';
+
+  currentQ = allSounds[Math.floor(Math.random()*allSounds.length)];
+  let wrongs = shuffle(allSounds.filter(s=>s.char!==currentQ.char)).slice(0,3);
+  let options = shuffle([currentQ, ...wrongs]);
+
+  const typeEl = document.getElementById('quiz-type');
+  const charEl = document.getElementById('quiz-char');
+
+  if(quizMode==='kr2rom') {
+    typeEl.textContent = '👇 選出正確拼音';
+    charEl.textContent = currentQ.char;
+    charEl.style.fontSize = '100px';
+  } else if(quizMode==='rom2kr') {
+    typeEl.textContent = '👇 選出正確韓字';
+    charEl.textContent = currentQ.rom;
+    charEl.style.fontSize = '48px';
+  } else {
+    typeEl.textContent = '👇 看提示，選出韓字';
+    charEl.textContent = currentQ.image + ' ' + currentQ.zh;
+    charEl.style.fontSize = '36px';
+  }
+
+  // Trigger animation
+  charEl.style.animation = 'none';
+  charEl.offsetHeight;
+  charEl.style.animation = 'pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+  const optEl = document.getElementById('quiz-options');
+  optEl.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-btn';
+    btn.textContent = quizMode==='kr2rom' ? opt.rom : opt.char;
+    btn.addEventListener('click', () => {
+      if(answered) return;
+      answered = true;
+      quizTotal++;
+      const correct = (quizMode==='kr2rom') ? opt.rom===currentQ.rom : opt.char===currentQ.char;
+      if(correct) {
+        quizCorrect++;
+        btn.classList.add('correct');
+        document.getElementById('quiz-feedback').innerHTML = `<span style="color:var(--accent3)">✓ 正確！</span> ${currentQ.char} = ${currentQ.rom} (${currentQ.zh})`;
+      } else {
+        btn.classList.add('wrong');
+        // highlight correct
+        optEl.querySelectorAll('.quiz-btn').forEach(b => {
+          const val = b.textContent;
+          if((quizMode==='kr2rom' && val===currentQ.rom)||(quizMode!=='kr2rom' && val===currentQ.char)) b.classList.add('correct');
+        });
+        document.getElementById('quiz-feedback').innerHTML = `<span style="color:var(--accent)">✗ 答錯</span>，正確是：<strong>${currentQ.char} = ${currentQ.rom}</strong> (${currentQ.mnemonic.slice(0,20)}…)`;
+      }
+      updateQuizScore();
+      document.getElementById('next-btn').style.display = 'inline-block';
+    });
+    optEl.appendChild(btn);
+  });
+}
+
+function updateQuizScore() {
+  document.getElementById('quiz-score').textContent = `答對：${quizCorrect} ／ 已答：${quizTotal}`;
+  const pct = quizTotal>0 ? (quizCorrect/quizTotal)*100 : 0;
+  document.getElementById('quiz-progress').style.width = pct+'%';
+}
+
+function resetQuiz() {
+  quizCorrect = 0; quizTotal = 0;
+  updateQuizScore();
+  nextQuestion();
+}
+
+resetQuiz();
+
+// ── CHEATSHEET ──
+const table = document.getElementById('cheatsheet-table');
+table.innerHTML = `<tr><th>韓字</th><th>拼音</th><th>中文音</th><th>類型</th><th>記憶關鍵字</th></tr>`;
+const allForSheet = [
+  ...vowels.map(d=>({...d,type:'母音'})),
+  ...compoundVowels.map(d=>({...d,type:'複合母音'})),
+  ...consonants.map(d=>({...d,type:'子音'})),
+  ...hardConsonants.map(d=>({...d,type:'硬音'})),
+];
+allForSheet.forEach(d=>{
+  const tr = document.createElement('tr');
+  const isVowel = d.type.includes('母音');
+  tr.className = isVowel ? 'vowel-row' : 'consonant-row';
+  tr.innerHTML = `
+    <td><span class="k">${d.char}</span></td>
+    <td><span style="font-family:'DM Mono',monospace">${d.rom}</span></td>
+    <td>${d.zh}</td>
+    <td><span class="badge ${isVowel?'badge-vowel':'badge-consonant'}">${d.type}</span></td>
+    <td style="font-size:12px;color:var(--muted)">${d.image} ${d.tip}</td>`;
+  table.appendChild(tr);
+});
+
+// ── TAB SWITCH ──
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
