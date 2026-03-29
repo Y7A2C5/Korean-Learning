@@ -670,31 +670,83 @@ const hardConsonants = [
 ];
 
 // ── TTS ──
+// Robust voice loader: browsers (especially Chrome) load voices async
 let krVoice = null;
+let voiceReady = false;
 
-function loadKoreanVoice() {
+function findKoreanVoice() {
   const voices = speechSynthesis.getVoices();
-  krVoice = voices.find(v => v.lang.startsWith('ko')) || null;
+  if (!voices.length) return false;
+  voiceReady = true;
+  // Prefer ko-KR, fall back to any ko-*, then null (browser will still try)
+  krVoice = voices.find(v => v.lang === 'ko-KR')
+           || voices.find(v => v.lang.startsWith('ko'))
+           || null;
+  return true;
 }
 
-loadKoreanVoice();
-if (speechSynthesis.onvoiceschanged !== undefined) {
-  speechSynthesis.onvoiceschanged = loadKoreanVoice;
+// Try immediately, then wait for voiceschanged, then poll as last resort
+if (!findKoreanVoice()) {
+  speechSynthesis.addEventListener('voiceschanged', () => {
+    findKoreanVoice();
+  });
+  // Fallback poll for browsers that never fire voiceschanged (some mobile)
+  let polls = 0;
+  const poll = setInterval(() => {
+    if (findKoreanVoice() || ++polls > 20) clearInterval(poll);
+  }, 250);
 }
 
 function speak(text, btn) {
-  if (!('speechSynthesis' in window)) { alert('您的瀏覽器不支援語音功能'); return; }
-  speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = 'ko-KR';
-  utt.rate = 0.8;
-  if (krVoice) utt.voice = krVoice;
-  if (btn) {
-    btn.classList.add('speaking');
-    utt.onend = () => btn.classList.remove('speaking');
-    utt.onerror = () => btn.classList.remove('speaking');
+  if (!('speechSynthesis' in window)) {
+    showToast('您的瀏覽器不支援語音功能，建議用 Chrome 或 Safari');
+    return;
   }
-  speechSynthesis.speak(utt);
+  speechSynthesis.cancel();
+
+  const doSpeak = () => {
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'ko-KR';
+    utt.rate = 0.85;
+    utt.pitch = 1;
+    if (krVoice) utt.voice = krVoice;
+    if (btn) {
+      btn.classList.add('speaking');
+      utt.onend  = () => btn.classList.remove('speaking');
+      utt.onerror = (e) => {
+        btn.classList.remove('speaking');
+        if (e.error !== 'interrupted') showToast('無法播放，請確認裝置已安裝韓語語音');
+      };
+    }
+    speechSynthesis.speak(utt);
+  };
+
+  if (voiceReady) {
+    doSpeak();
+  } else {
+    // Voices not loaded yet — wait up to 2s
+    let waited = 0;
+    const wait = setInterval(() => {
+      if (findKoreanVoice() || (waited += 100) >= 2000) {
+        clearInterval(wait);
+        doSpeak();
+      }
+    }, 100);
+  }
+}
+
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;text-align:center;max-width:90vw';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.style.opacity = '0', 3500);
 }
 
 // Speak a sample syllable for consonants (add ㅏ to make it pronounceable)
